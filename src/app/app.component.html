@@ -1,24 +1,20 @@
-<div class="calculator">
-  <div class="display">{{ display$ | async }}</div> <!-- Use async pipe to handle observable -->
-  <div class="keypad">
-    <button (click)="onDigit('7')">7</button>
-    <button (click)="onDigit('8')">8</button>
-    <button (click)="onDigit('9')">9</button>
-    <button (click)="onOperator('/')">/</button>
-
-    <button (click)="onDigit('4')">4</button>
-    <button (click)="onDigit('5')">5</button>
-    <button (click)="onDigit('6')">6</button>
-    <button (click)="onOperator('*')">*</button>
-
-    <button (click)="onDigit('1')">1</button>
-    <button (click)="onDigit('2')">2</button>
-    <button (click)="onDigit('3')">3</button>
-    <button (click)="onOperator('-')">-</button>
-
-    <button (click)="onDigit('0')">0</button>
-    <button (click)="onOperator('+')">+</button>
-    <button (click)="onCalculate( '=')">=</button>
-    <button (click)="onClear()">C</button>
+<div id="container" [ngClass]="theme" >
+  <div id="container-display">
+    <div class="display">{{ displayValue }}</div>
+    <div class="calculator">
+      <div class="keypad">
+        <button (click)="onClearClick()">C</button>
+        <button (click)="onPlusMinusClick()">+/-</button>
+        <button (click)="onPercentClick()">%</button>
+        <button *ngFor="let number of numbers" (click)="onNumberClick(number)">{{ number }}</button>
+        <button (click)="onDoubleZeroClick()">00</button>
+        <button (click)="onDotClick()">.</button>
+        <button (click)="onOperatorClick('+')">+</button>
+        <button (click)="onOperatorClick('-')">-</button>
+        <button (click)="onOperatorClick('*')">x</button>
+        <button (click)="onOperatorClick('/')">:</button>
+        <button (click)="onEqualsClick()">=</button>
+      </div>
+    </div>
   </div>
 </div>

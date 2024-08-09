@@ -1,47 +1,108 @@
-import { Component } from '@angular/core';
-import { Store, select } from '@ngrx/store'; // Import select from @ngrx/store
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterOutlet } from '@angular/router';
 import { Observable } from 'rxjs';
-import { addDigit, setOperator, calculateResult, clearCalculator } from './store/calculator.actions';
-import { CalculatorState } from './store/calculator.reducer';
-import {CommonModule} from "@angular/common";
-import {RouterOutlet} from "@angular/router";
-
+import { Store } from '@ngrx/store';
+import {add, subtract, multiply, divide} from "./actions/calculator.actions";
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule, RouterOutlet],
+  standalone: true,
+  imports: [RouterOutlet, CommonModule],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  standalone: true
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  display$: Observable<string>;
+  title = 'my-calculator';
+  numbers = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0];
+  displayValue = '0';
+  private currentValue = '';
+  private operator = '';
+  private previousValue = '';
+  theme = 'dark';
 
-  constructor(private store: Store<{ calculator: CalculatorState }>) {
-    this.display$ = store.pipe(select(state => state.calculator?.display));
+  count$?: Observable<number>;
+
+  constructor(private store: Store<{ calculator: number }>) {
+    this.count$ = this.store.select('calculator');
   }
 
-  // Dispatch action to add digit
-  onDigit(digit: string) {
-    this.store.dispatch(addDigit({ digit }));
-    console.log('Adding digit:', digit); // Add console log
+  onNumberClick(number: number) {
+    this.currentValue += number;
+    this.displayValue = this.currentValue;
   }
 
-  // Dispatch action to set operator
-  onOperator(operator: string) {
-    this.store.dispatch(setOperator({ operator }));
-    console.log('Setting operator:', operator); // Add console
+  onOperatorClick(operator: string) {
+    this.operator = operator;
+    this.previousValue = this.currentValue;
+    this.currentValue = '';
+    this.updateDisplay();
   }
 
-  // Dispatch action to calculate result
-  onCalculate(calculate: string) {
-    this.store.dispatch(calculateResult());
-    console.log('Calculating result', calculate);
+  onEqualsClick() {
+    const num1 = parseFloat(this.previousValue);
+    const num2 = parseFloat(this.currentValue);
+
+    switch (this.operator) {
+      case '+':
+        this.store.dispatch(add({num1, num2}));
+        break;
+      case '-':
+        this.store.dispatch(subtract({num1, num2}));
+        break;
+      case '*':
+        this.store.dispatch(multiply({num1, num2}));
+        break;
+      case '/':
+        this.store.dispatch(divide({num1, num2}));
+        break;
+      default:
+        return;
+    }
+
+    this.store.select('calculator').subscribe(result => {
+      this.displayValue = result.toString();
+      this.currentValue = result.toString();
+      this.operator = '';
+      this.previousValue = '';
+    });
   }
 
-  // Dispatch action to clear calculator
-  onClear() {
-    this.store.dispatch(clearCalculator({ clear: '0' }));
-    console.log('Clearing calculator');
+  onClearClick() {
+    this.currentValue = '';
+    this.previousValue = '';
+    this.operator = '';
+    this.displayValue = '0';
+  }
+
+  onPercentClick() {
+    if (this.currentValue) {
+      this.currentValue = (parseFloat(this.currentValue) / 100).toString();
+      this.displayValue = this.currentValue;
+    }
+  }
+
+  onPlusMinusClick() {
+    if (this.currentValue) {
+      this.currentValue = (parseFloat(this.currentValue) * -1).toString();
+      this.displayValue = this.currentValue;
+    }
+  }
+
+  onDoubleZeroClick() {
+    this.currentValue += '00';
+    this.displayValue = this.currentValue;
+  }
+
+  onDotClick() {
+    if (!this.currentValue.includes('.')) {
+      this.currentValue += '.';
+      this.displayValue = this.currentValue;
+    }
+  }
+
+
+  updateDisplay() {
+    this.displayValue = `${this.previousValue} ${this.operator} ${this.currentValue}`;
   }
 }

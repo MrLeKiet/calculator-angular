@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { StoreModule } from '@ngrx/store';
 import { CommonModule } from '@angular/common'; // Import CommonModule
 import { AppComponent } from './app.component';
-import { calculatorReducer } from './store/calculator.reducer';
+import { calculatorReducer } from './reducers/calculator.reducer';
 
 @NgModule({
   declarations: [AppComponent],

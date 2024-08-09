@@ -1,3 +1,10 @@
+#container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .calculator {
   width: 200px;
   margin: 50px auto;
@@ -8,7 +15,13 @@
   background-color: #f9f9f9;
 }
 
+.container-display {
+  display: flex;
+  width: fit-content;
+}
+
 .display {
+  width: 200px;
   height: 40px;
   border: 1px solid #ccc;
   text-align: right;
@@ -26,7 +39,6 @@
 }
 
 button {
-  width: 100%;
   padding: 10px;
   font-size: 18px;
   border: none;
